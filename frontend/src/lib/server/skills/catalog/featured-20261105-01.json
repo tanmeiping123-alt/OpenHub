@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 1,
+  "id": "featured-20261105-01",
+  "publishedAt": "2026-11-05T03:32:34Z",
+  "repositories": [
+    { "id": 1073224795, "fullName": "obra/superpowers" },
+    { "id": 1061953414, "fullName": "anthropics/skills" },
+    { "id": 1112540808, "fullName": "vercel-labs/agent-skills" }
+  ],
+  "candidates": [
+    {
+      "id": "superpowers-brainstorming",
+      "repositoryId": 1073224795,
+      "path": "skills/brainstorming",
+      "name": "brainstorming",
+      "representative": true,
+      "displayAdmission": "ADMITTED",
+      "summary": {
+        "en": "Clarify goals, explore constraints and prepare a design before implementation.",
+        "zh-CN": "梳理目标与约束，在实施前明确设计方向。"
+      },
+      "direction": {
+        "en": "Requirements clarification and design planning",
+        "zh-CN": "需求澄清与设计规划"
+      },
+      "dependencies": {
+        "en": "References writing-plans and local review/visual-companion resources; includes helper scripts.",
+        "zh-CN": "引用 writing-plans、评审及本地可视化资源，目录含辅助脚本。"
+      },
+      "limitations": {
+        "en": "External approval, subagent and file workflows are not platform permissions. Resources have not passed full security review; no scripts were run.",
+        "zh-CN": "上游审批、子代理和文件流程不代表平台授权。资源尚未完成完整安全审核，未运行任何脚本。"
+      },
+      "licenseSummary": {
+        "en": "Repository LICENSE declares MIT; resource-level reuse and adaptation review remains pending.",
+        "zh-CN": "仓库 LICENSE 标明 MIT；资源级复用及适配许可仍待复核。"
+      },
+      "licensePath": "LICENSE",
+      "sourceCommit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "mainFileSha256": "2c9ca71f94886f9ca9f4aef055f7cafb3e1a9bdf3aeebf8f4cb547c69405d207",
+      "checkedAt": "2026-11-05T03:30:56Z"
+    },
+    {
+      "id": "superpowers-writing-plans",
+      "repositoryId": 1073224795,
+      "path": "skills/writing-plans",
+      "name": "writing-plans",
+      "representative": false,
+      "displayAdmission": "ADMITTED",
+      "summary": {
+        "en": "Turn requirements into concrete implementation tasks with testable outcomes.",
+        "zh-CN": "将需求拆成具体实施任务与可检查的完成条件。"
+      },
+      "direction": {
+        "en": "Task decomposition and acceptance planning",
+        "zh-CN": "任务拆解与验收规划"
+      },
+      "dependencies": {
+        "en": "Assumes a source project, approved design and related Superpowers workflows.",
+        "zh-CN": "假定已有源项目、获批设计及相关 Superpowers 流程。"
+      },
+      "limitations": {
+        "en": "Its commit, worktree and agent workflows need adaptation; listing does not execute them or validate plan quality.",
+        "zh-CN": "提交、工作树及代理流程需要适配；展示不代表执行流程或验证计划质量。"
+      },
+      "licenseSummary": {
+        "en": "Repository LICENSE declares MIT; adaptation review pending.",
+        "zh-CN": "仓库 LICENSE 标明 MIT；适配复核待完成。"
+      },
+      "licensePath": "LICENSE",
+      "sourceCommit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "mainFileSha256": "a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a",
+      "checkedAt": "2026-11-05T03:30:56Z"
+    },
+    {
+      "id": "anthropic-frontend-design",
+      "repositoryId": 1061953414,
+      "path": "skills/frontend-design",
+      "name": "frontend-design",
+      "representative": true,
+      "displayAdmission": "ADMITTED",
+      "summary": {
+        "en": "Develop deliberate visual direction, typography and layouts for a specific web brief.",
+        "zh-CN": "围绕具体网页需求形成视觉方向、字体与布局要求。"
+      },
+      "direction": {
+        "en": "Web visual design and frontend briefs",
+        "zh-CN": "网页视觉设计与前端需求"
+      },
+      "dependencies": {
+        "en": "Needs a concrete subject, audience and design brief; actual implementation depends on the target environment.",
+        "zh-CN": "需要明确主题、受众和设计需求；实际实现取决于目标环境。"
+      },
+      "limitations": {
+        "en": "Visual guidance is not a complete accessibility audit or proof of usability. No platform execution or comparative evaluation exists.",
+        "zh-CN": "视觉方法不等于完整无障碍审计或可用性证据；尚无平台执行及对照验证。"
+      },
+      "licenseSummary": {
+        "en": "This directory has LICENSE.txt headed Apache License 2.0; the repository API reports no blanket license. Full reuse review remains pending.",
+        "zh-CN": "此目录有以 Apache License 2.0 为标题的 LICENSE.txt；仓库 API 未给出统一许可。完整复用审查仍待完成。"
+      },
+      "licensePath": "skills/frontend-design/LICENSE.txt",
+      "sourceCommit": "ca45fc496a3436251f191354091d557da31c15b5",
+      "mainFileSha256": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3",
+      "checkedAt": "2026-11-05T03:30:56Z"
+    },
+    {
+      "id": "anthropic-webapp-testing",
+      "repositoryId": 1061953414,
+      "path": "skills/webapp-testing",
+      "name": "webapp-testing",
+      "representative": false,
+      "displayAdmission": "ADMITTED",
+      "summary": {
+        "en": "Outline browser checks for local web applications using Playwright-based methods.",
+        "zh-CN": "参考 Playwright 方法，为本地网页应用梳理浏览器检查。"
+      },
+      "direction": {
+        "en": "Browser test plans and acceptance checks",
+        "zh-CN": "浏览器测试方案与验收检查"
+      },
+      "dependencies": {
+        "en": "Python, Playwright, browser installation, a running app and local server helper scripts.",
+        "zh-CN": "依赖 Python、Playwright、浏览器、运行中的应用及本地服务辅助脚本。"
+      },
+      "limitations": {
+        "en": "Generating a test plan is not running a browser test. Scripts/examples are unreviewed and were not executed.",
+        "zh-CN": "生成测试方案不等于已运行浏览器测试。脚本与示例待审核，本轮未执行。"
+      },
+      "licenseSummary": {
+        "en": "Directory LICENSE.txt is headed Apache License 2.0; per-resource reuse review pending.",
+        "zh-CN": "目录 LICENSE.txt 以 Apache License 2.0 为标题；资源级复用审查待完成。"
+      },
+      "licensePath": "skills/webapp-testing/LICENSE.txt",
+      "sourceCommit": "ca45fc496a3436251f191354091d557da31c15b5",
+      "mainFileSha256": "51b7349e77ec63b7744a6f63647e7566a0b4d2e301121cc10e8c2113af6556a2",
+      "checkedAt": "2026-11-05T03:30:56Z"
+    },
+    {
+      "id": "vercel-react-best-practices",
+      "repositoryId": 1112540808,
+      "path": "skills/react-best-practices",
+      "name": "vercel-react-best-practices",
+      "representative": true,
+      "displayAdmission": "ADMITTED",
+      "summary": {
+        "en": "Organize React and Next.js performance requirements across data, bundles and rendering.",
+        "zh-CN": "从数据、包体积和渲染等方面组织 React / Next.js 性能要求。"
+      },
+      "direction": { "en": "React / Next.js performance", "zh-CN": "React / Next.js 性能" },
+      "dependencies": {
+        "en": "References AGENTS.md and a collection of rule files; requires a compatible React/Next.js project.",
+        "zh-CN": "引用 AGENTS.md 与规则文件集，需要兼容的 React / Next.js 项目。"
+      },
+      "limitations": {
+        "en": "The directory exceeds the offline profile's 64-file limit, and its declared name differs from the directory name. Import compatibility and complete rules review are unresolved; not general-purpose development advice.",
+        "zh-CN": "目录超过离线 profile 的 64 文件上限，声明名称与目录名也不一致。导入兼容性及完整规则审查尚未解决，不泛化为全部开发任务。"
+      },
+      "licenseSummary": {
+        "en": "SKILL.md declares MIT; repository metadata has no detected blanket license. Complete dependency license review pending.",
+        "zh-CN": "SKILL.md 声明 MIT；仓库元数据未识别统一许可。完整依赖许可审查待完成。"
+      },
+      "licensePath": null,
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "mainFileSha256": "71ed7794962fa6e803ee83030517b5b93a9f70fbfeb431ec4535c5480a8d8355",
+      "checkedAt": "2026-11-05T03:30:56Z"
+    },
+    {
+      "id": "vercel-web-design-guidelines",
+      "repositoryId": 1112540808,
+      "path": "skills/web-design-guidelines",
+      "name": "web-design-guidelines",
+      "representative": false,
+      "displayAdmission": "ADMITTED",
+      "summary": {
+        "en": "Review interface requirements against a separate web-interface rule set.",
+        "zh-CN": "参考独立的网页界面规则集检查界面要求。"
+      },
+      "direction": { "en": "Interface and accessibility review", "zh-CN": "界面与可访问性检查" },
+      "dependencies": {
+        "en": "Requests rules from vercel-labs/web-interface-guidelines main/command.md; that external dependency is not snapshotted.",
+        "zh-CN": "要求获取 vercel-labs/web-interface-guidelines 的 main/command.md；该外部依赖尚未固定快照。"
+      },
+      "limitations": {
+        "en": "The Skill commit alone does not pin its rules. No external links were followed; unresolved rules and license keep runtime use blocked.",
+        "zh-CN": "仅固定 Skill commit 不能固定规则。未跟随外链；规则与许可未解决，不能用于运行。"
+      },
+      "licenseSummary": {
+        "en": "No per-Skill license declaration was found in the main file; dependency and reuse permission review pending.",
+        "zh-CN": "主文件未见逐 Skill 许可声明；依赖与复用许可待核查。"
+      },
+      "licensePath": null,
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "mainFileSha256": "f4647ca866a3accf763777f83e7682954f0187cd6bea7eea0399796652414e8f",
+      "checkedAt": "2026-11-05T03:30:56Z"
+    },
+    {
+      "id": "vercel-writing-guidelines",
+      "repositoryId": 1112540808,
+      "path": "skills/writing-guidelines",
+      "name": "writing-guidelines",
+      "representative": false,
+      "displayAdmission": "ADMITTED",
+      "summary": {
+        "en": "Review documentation against Vercel's separate writing handbook.",
+        "zh-CN": "参考 Vercel 独立写作手册检查技术文档。"
+      },
+      "direction": {
+        "en": "Technical writing and brand-specific prose",
+        "zh-CN": "技术写作与特定品牌文风"
+      },
+      "dependencies": {
+        "en": "Requests vercel-labs/writing-guidelines main/command.md; this external rule source is not pinned or reviewed.",
+        "zh-CN": "要求获取 vercel-labs/writing-guidelines 的 main/command.md；该外部规则尚未固定或审核。"
+      },
+      "limitations": {
+        "en": "Brand-specific guidance is not a universal writing standard. Unresolved external content cannot be called reproducible or executable.",
+        "zh-CN": "特定品牌规范不是通用写作标准；外部内容未解决，不能声称可复现或可运行。"
+      },
+      "licenseSummary": {
+        "en": "No per-Skill license declaration in the main file; external rule permissions require review.",
+        "zh-CN": "主文件未声明逐 Skill 许可；外部规则权限需独立审核。"
+      },
+      "licensePath": null,
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "mainFileSha256": "89a5f581193289b80af58b980090aeed535047c8df2b55ccbaae0de40283a99d",
+      "checkedAt": "2026-11-05T03:30:56Z"
+    }
+  ],
+  "observations": [
+    {
+      "repositoryId": 1073224795,
+      "stars": 312516,
+      "observedAt": "2026-11-05T03:27:23.288Z",
+      "sourceUrl": "https://api.github.com/repos/obra/superpowers",
+      "lastAttempt": { "at": "2026-11-05T03:27:23.288Z", "result": "SUCCEEDED", "errorCode": null }
+    },
+    {
+      "repositoryId": 1061953414,
+      "stars": 187456,
+      "observedAt": "2026-11-05T03:27:23.663Z",
+      "sourceUrl": "https://api.github.com/repos/anthropics/skills",
+      "lastAttempt": { "at": "2026-11-05T03:27:23.663Z", "result": "SUCCEEDED", "errorCode": null }
+    },
+    {
+      "repositoryId": 1112540808,
+      "stars": 33553,
+      "observedAt": "2026-11-05T03:27:24.029Z",
+      "sourceUrl": "https://api.github.com/repos/vercel-labs/agent-skills",
+      "lastAttempt": { "at": "2026-11-05T03:27:24.029Z", "result": "SUCCEEDED", "errorCode": null }
+    }
+  ],
+  "orderedEntryIds": [
+    "superpowers-brainstorming",
+    "anthropic-frontend-design",
+    "vercel-react-best-practices"
+  ]
+}

@@ -1,0 +1,73 @@
+# Keep the repository rooted in application files only.
+/*
+!/.gitignore
+!/.gitattributes
+!/.nvmrc
+!/package.json
+!/package-lock.json
+!/frontend/
+!/modules/
+!/scripts/
+!/启动 PromptMaster AI.bat
+!/停止 PromptMaster AI.bat
+
+# Documentation, assistant notes and personal workspace files.
+**/docs/
+**/dev-docs/
+**/.workbuddy/
+**/.claude/
+**/.idea/
+**/.vscode/
+*.md
+*.mdx
+*.txt
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx
+*.lnk
+# Third-party license notices are required source assets.
+!**/LICENSE*
+!**/LICENCE*
+!**/NOTICE*
+!**/COPYING*
+!**/OFL*
+!**/robots.txt
+
+# Local credentials; public Excalidraw defaults are explicitly allowlisted.
+.env*
+!.env.example
+!/modules/excalidraw/.env.development
+!/modules/excalidraw/.env.production
+!/modules/excalidraw/.env.test
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependencies and reproducible build/test output.
+node_modules/
+.next/
+build/
+dist/
+dev-dist/
+out/
+coverage/
+test-results/
+playwright-report/
+.turbo/
+.vercel/
+.yarn/
+*.log
+*.tsbuildinfo
+*.tgz
+.DS_Store
+Thumbs.db
+/frontend/public/modules/excalidraw/
+
+# Personal payment images remain on this machine.
+/frontend/public/payments/*
+!/frontend/public/payments/.gitkeep
