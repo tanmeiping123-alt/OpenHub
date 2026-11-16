@@ -6,12 +6,30 @@ const loopbackHosts = new Set(["localhost", "127.0.0.1", "[::1]"]);
 export function guardLocalDemoApi(request: Request, requireSameOrigin = false) {
   const host = request.headers.get("host")?.toLowerCase() ?? "";
   const hostname = host.replace(/:\d+$/, "");
+  const cloud = process.env.PROMPTMASTER_DEPLOYMENT_MODE === "cloudflare-container";
+  let cloudOrigin = "";
+  if (cloud) {
+    try {
+      const configured = process.env.OPENHUB_PUBLIC_ORIGIN ?? "";
+      const url = new URL(configured);
+      if (url.protocol === "https:" && configured === url.origin) cloudOrigin = url.origin;
+    } catch {
+      // An absent or malformed cloud origin must never enable public API access.
+    }
+  }
   if (
-    process.env.NODE_ENV === "production" ||
     process.env.PROMPTMASTER_DEMO_API_ENABLED !== "true" ||
-    !loopbackHosts.has(hostname)
+    (cloud
+      ? !cloudOrigin || host !== new URL(cloudOrigin).host ||
+        request.headers.get("x-forwarded-host") !== host ||
+        request.headers.get("x-forwarded-proto") !== "https"
+      : process.env.NODE_ENV === "production" || !loopbackHosts.has(hostname))
   ) {
     return NextResponse.json({ error: "DEMO_API_DISABLED" }, { status: 404 });
+  }
+
+  if (request.headers.get("sec-fetch-site") === "cross-site") {
+    return NextResponse.json({ error: "ORIGIN_REJECTED" }, { status: 403 });
   }
 
   if (requireSameOrigin) {
@@ -24,7 +42,7 @@ export function guardLocalDemoApi(request: Request, requireSameOrigin = false) {
     } catch {
       originHost = "";
     }
-    if (!originHost || originHost !== host || !sameProtocol) {
+    if (cloud ? origin !== cloudOrigin : !originHost || originHost !== host || !sameProtocol) {
       return NextResponse.json({ error: "ORIGIN_REJECTED" }, { status: 403 });
     }
   }

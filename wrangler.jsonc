@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "openhub",
+  "account_id": "e4d8817046dbaec42b4684431eccef0c",
+  "main": "cloudflare/worker.ts",
+  "compatibility_date": "2026-11-16",
+  "workers_dev": true,
+  "containers": [{
+    "class_name": "OpenHubContainer",
+    "image": "./Dockerfile",
+    "instance_type": "standard-1",
+    "max_instances": 1
+  }],
+  "durable_objects": { "bindings": [{ "name": "OPENHUB_CONTAINER", "class_name": "OpenHubContainer" }] },
+  "exports": { "OpenHubContainer": { "type": "durable-object", "storage": "sqlite" } }
+}

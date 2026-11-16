@@ -1,14 +1,10 @@
-// One-time local bootstrap: read credentials from stdin, never source files/logs.
+// One-time operator bootstrap: read credentials from stdin, never source files/logs.
 // Existing accounts are preserved; this command never resets a password or role.
 import pg from "pg";
 import { randomBytes, randomUUID, scrypt } from "node:crypto";
 import { promisify } from "node:util";
-const url = new URL(process.env.DATABASE_URL ?? "invalid:");
-if (
-  !["127.0.0.1", "localhost", "[::1]"].includes(url.hostname) ||
-  url.pathname !== "/promptmaster_dev"
-)
-  throw Error("LOCAL_DATABASE_REQUIRED");
+import { assertAccountBootstrapTarget } from "../../scripts/cloud-config.mjs";
+assertAccountBootstrapTarget(process.env.DATABASE_URL, process.argv.includes("--cloud"), process.env.PROMPTMASTER_DEPLOYMENT_MODE);
 let input = "";
 for await (const chunk of process.stdin) {
   input += chunk;

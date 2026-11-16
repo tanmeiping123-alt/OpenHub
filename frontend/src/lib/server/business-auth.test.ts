@@ -8,6 +8,7 @@ const routes = import.meta.glob("../../app/api/**/route.ts");
 // These reads are intentionally anonymous. Pelican's preview session controls
 // operate only on publication-gated resources, not on model executions.
 const publicGets = new Set([
+  "../../app/api/health/route.ts",
   "../../app/api/community/route.ts",
   "../../app/api/community/[id]/route.ts",
   "../../app/api/community/creators/[id]/route.ts",

@@ -8,6 +8,10 @@
 !/frontend/
 !/modules/
 !/scripts/
+!/cloudflare/
+!/Dockerfile
+!/.dockerignore
+!/wrangler.jsonc
 !/启动 PromptMaster AI.bat
 !/停止 PromptMaster AI.bat
 
@@ -63,6 +67,10 @@ playwright-report/
 .yarn/
 *.log
 *.tsbuildinfo
+.wrangler/
+.dev.vars*
+!**/.dev.vars.example
+/cloudflare/worker-configuration.d.ts
 *.tgz
 .DS_Store
 Thumbs.db

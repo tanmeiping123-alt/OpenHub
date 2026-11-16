@@ -23,6 +23,7 @@ import {
 import { pelicanHash, pelicanMessages, pelicanPayload } from "./policy";
 import { PELICAN_ADAPTER_VERSION, preparePelicanPreview } from "./renderer";
 import { forEachConcurrent, pelicanConcurrency } from "./concurrency";
+import { beginBackgroundWork } from "../runtime-activity";
 
 function runtimeConfig(snapshot: Omit<LiveModelConfig, "apiKey">, modelKey: string) {
   const current = readPelicanModelConfig(process.env, {
@@ -410,6 +411,7 @@ async function executePelicanJob(job: PelicanJob, actor: PelicanActor, runner: L
 
 async function executePelicanBatch(batchId: string, { actor, jobs, epoch }: ReservedRun) {
   const runner = createPelicanRunner(batchId, epoch);
+  const finishActivity = beginBackgroundWork();
   try {
     // Bounded parallel dispatch: a slow model no longer holds every later sample
     // behind its full generation time. Provider rate limits and account quotas still
@@ -420,6 +422,7 @@ async function executePelicanBatch(batchId: string, { actor, jobs, epoch }: Rese
     await completeSettledBatch(batchId);
     return await getPelicanAdminBatch(batchId);
   } finally {
+    finishActivity();
     clearInterval(runner.timer);
     if (runners.get(batchId) === runner) runners.delete(batchId);
     await getPool().query(

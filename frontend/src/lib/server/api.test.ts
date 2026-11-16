@@ -31,6 +31,77 @@ describe("local demo API boundary", () => {
     expect(guardLocalDemoApi(request("localhost:3000", "http://localhost:3000"), true)).toBeNull();
   });
 
+  it("allows production API access only for the explicitly configured HTTPS origin", () => {
+    vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "true");
+    vi.stubEnv("PROMPTMASTER_DEPLOYMENT_MODE", "cloudflare-container");
+    vi.stubEnv("OPENHUB_PUBLIC_ORIGIN", "https://openhub.example");
+    vi.stubEnv("NODE_ENV", "production");
+    const cloudRequest = new Request("https://openhub.example/api/prompts", {
+      headers: {
+        host: "openhub.example",
+        "x-forwarded-host": "openhub.example",
+        "x-forwarded-proto": "https",
+        origin: "https://openhub.example",
+      },
+    });
+    expect(guardLocalDemoApi(cloudRequest, true)).toBeNull();
+  });
+
+  it("accepts Next's internal listener URL only with canonical proxy headers", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "true");
+    vi.stubEnv("PROMPTMASTER_DEPLOYMENT_MODE", "cloudflare-container");
+    vi.stubEnv("OPENHUB_PUBLIC_ORIGIN", "https://openhub.example");
+    const headers = { host: "openhub.example", "x-forwarded-host": "openhub.example", "x-forwarded-proto": "https", origin: "https://openhub.example" };
+    expect(guardLocalDemoApi(new Request("https://0.0.0.0:3000/api/test", { headers }), true)).toBeNull();
+    for (const overrides of [
+      { "x-forwarded-host": "" },
+      { "x-forwarded-proto": "" },
+      { "x-forwarded-host": "evil.example" },
+      { "x-forwarded-host": "openhub.example, evil.example" },
+      { "x-forwarded-proto": "http" },
+      { "x-forwarded-proto": "https,http" },
+    ]) {
+      expect(guardLocalDemoApi(new Request("https://0.0.0.0:3000/api/test", { headers: { ...headers, ...overrides } }), true)?.status).toBe(404);
+    }
+  });
+
+  it("fails closed when cloud configuration or the incoming host is invalid", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "true");
+    vi.stubEnv("PROMPTMASTER_DEPLOYMENT_MODE", "cloudflare-container");
+    const cloud = (url = "https://openhub.example/api/test", host = "openhub.example") =>
+      new Request(url, { headers: { host, "x-forwarded-host": "openhub.example", "x-forwarded-proto": "https", origin: "https://openhub.example" } });
+    for (const origin of ["", "http://openhub.example", "https://user:pass@openhub.example", "https://openhub.example/path", "https://openhub.example?x=1", "bad"]) {
+      vi.stubEnv("OPENHUB_PUBLIC_ORIGIN", origin);
+      expect(guardLocalDemoApi(cloud(), true)?.status).toBe(404);
+    }
+    vi.stubEnv("OPENHUB_PUBLIC_ORIGIN", "https://openhub.example");
+    expect(guardLocalDemoApi(cloud(undefined, "evil.example"), true)?.status).toBe(404);
+    vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "false");
+    expect(guardLocalDemoApi(cloud(), true)?.status).toBe(404);
+  });
+
+  it("retains same-origin write checks and rejects cross-site cloud requests", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "true");
+    vi.stubEnv("PROMPTMASTER_DEPLOYMENT_MODE", "cloudflare-container");
+    vi.stubEnv("OPENHUB_PUBLIC_ORIGIN", "https://openhub.example");
+    for (const origin of ["", "https://evil.example", "http://openhub.example", "null"]) {
+      const r = new Request("https://openhub.example/api/test", { headers: { host: "openhub.example", "x-forwarded-host": "openhub.example", "x-forwarded-proto": "https", origin } });
+      expect(guardLocalDemoApi(r, true)?.status).toBe(403);
+    }
+    const crossSite = new Request("https://openhub.example/api/test", { headers: { host: "openhub.example", "x-forwarded-host": "openhub.example", "x-forwarded-proto": "https", "sec-fetch-site": "cross-site" } });
+    expect(guardLocalDemoApi(crossSite)?.status).toBe(403);
+  });
+
+  it("does not trust spoofed proxy headers in local mode", () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "true");
+    const r = new Request("http://evil.example/api/test", { headers: { host: "evil.example", "x-forwarded-host": "localhost:3000", "x-forwarded-proto": "http", origin: "http://localhost:3000" } });
+    expect(guardLocalDemoApi(r, true)?.status).toBe(404);
+  });
+
   it("requires a bounded score shape and allows null scores", () => {
     expect(validLayer({ status: "NOT_EXECUTED", score: null, grade: null, dimensions: [] })).toBe(
       true,

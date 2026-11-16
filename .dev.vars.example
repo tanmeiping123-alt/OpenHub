@@ -1,0 +1,9 @@
+# Wrangler secret template. Copy to .dev.vars only on your own machine.
+# For deployment store real values with: npx wrangler secret put DATABASE_URL
+DATABASE_URL=postgresql://USER:REPLACE_PASSWORD@YOUR_DATABASE_HOST/openhub?sslmode=require
+# Optional fixed custom HTTPS origin. Defaults to the actual Worker request origin.
+# OPENHUB_PUBLIC_ORIGIN=https://openhub.YOUR_SUBDOMAIN.workers.dev
+# Model execution stays disabled until a real provider key is configured.
+PROMPTMASTER_MODEL_MODE=disabled
+SILICONFLOW_API_KEY=
+DEEPSEEK_API_KEY=

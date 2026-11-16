@@ -16,9 +16,18 @@
     "typecheck": "npm --prefix frontend run typecheck",
     "test": "npm --prefix frontend test",
     "check": "npm run lint && npm run typecheck && npm test",
-    "db:migrate": "npm --prefix frontend run db:migrate"
+    "db:migrate": "npm --prefix frontend run db:migrate",
+    "test:cloud": "node --test cloudflare/*.test.mjs",
+    "typecheck:cloud": "node frontend/node_modules/typescript/bin/tsc --project cloudflare/tsconfig.json",
+    "cloud:build": "docker build -t openhub:local .",
+    "cloud:deploy": "wrangler deploy --keep-vars",
+    "cloud:verify": "npm run test:cloud && npm run typecheck:cloud && wrangler deploy --dry-run --containers-rollout none --outdir .wrangler/worker-check",
+    "db:bootstrap:cloud": "node --env-file-if-exists=.env.cloud.local frontend/scripts/initialize-accounts.mjs --cloud",
+    "cloud:login": "wrangler login"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "5.20261116.1",
+    "wrangler": "4.163.0",
     "yarn": "1.22.22"
   }
 }

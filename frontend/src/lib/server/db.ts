@@ -2,11 +2,10 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { Pool, type PoolClient } from "pg";
 
-const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../");
-const migrationDirectory = path.join(projectRoot, "migrations");
+// Bundlers relocate this module. Resolve data from the application working directory.
+const migrationDirectory = path.join(process.cwd(), "migrations");
 const demoUserId = "usr_local_demo_01";
 
 type DbGlobals = typeof globalThis & {
