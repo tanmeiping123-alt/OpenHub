@@ -9,6 +9,7 @@ class AuthFormError extends Error {}
 
 export function AccountAuth({ locale, page }: { locale: Locale; page: "login" | "register" }) {
   const search = useSearchParams();
+  const cloudAuth = process.env.NEXT_PUBLIC_OPENHUB_CLOUD_AUTH === "true";
   const next = safeWorkspaceNext(search.get("next"), locale);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,7 +64,11 @@ export function AccountAuth({ locale, page }: { locale: Locale; page: "login" | 
       const data = await response.json();
       if (!response.ok) {
         throw new AuthFormError(
-          data.error === "TOO_MANY_ATTEMPTS"
+          data.error === "EMAIL_CONFIRMATION_REQUIRED"
+            ? t("Check your verification email, then return here to log in.", "请打开验证邮件完成邮箱验证，然后返回此处登录。")
+            : data.error === "ACCOUNT_LINK_REQUIRED"
+              ? t("This account needs an administrator to link its cloud identity before signing in.", "此账号需要管理员关联云端身份后才能登录。")
+            : data.error === "TOO_MANY_ATTEMPTS"
             ? t("Too many attempts. Try again in 15 minutes.", "尝试次数过多，请在 15 分钟后重试。")
             : data.error === "ACCOUNT_UNAVAILABLE"
               ? t(
@@ -137,7 +142,15 @@ export function AccountAuth({ locale, page }: { locale: Locale; page: "login" | 
               {notice}
             </p>
           )}
-          <form className="stack" onSubmit={submit} aria-busy={busy}>
+          {cloudAuth && (
+            <div className="stack">
+              <a className="btn btn-primary" href={`/api/auth/github?${new URLSearchParams({ next })}`}>
+                {t("Continue with GitHub", "使用 GitHub 登录 / 注册")}
+              </a>
+              <p className="small subtle">{t("Public registration uses GitHub. Your workspace is created on your first sign-in.", "公开注册使用 GitHub，首次登录将自动创建工作区。")}</p>
+            </div>
+          )}
+          {(!cloudAuth || page === "login") && <form className="stack" onSubmit={submit} aria-busy={busy}>
             {error && (
               <p ref={errorRef} tabIndex={-1} className="auth-error" role="alert">
                 {error}
@@ -232,7 +245,7 @@ export function AccountAuth({ locale, page }: { locale: Locale; page: "login" | 
                   ? t("Log in", "登录")
                   : t("Create account", "创建账号")}
             </button>
-          </form>
+          </form>}
           <div className="auth-help stack">
             <Link href={`/${locale}/help#recovery`}>
               {t("Forgot password / account recovery", "忘记密码 / 账号恢复")}

@@ -8,7 +8,7 @@
     "build": "npm run build:whiteboard && next build",
     "start": "next start",
     "lint": "eslint --max-warnings=0",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
@@ -32,21 +32,24 @@
     "test:model:live": "node --env-file-if-exists=.env.local scripts/model-smoke.mjs",
     "test:model:stage13a2": "node --env-file-if-exists=.env.local scripts/stage13a2-smoke.mjs",
     "format:check": "prettier --check .",
-    "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs"
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
+    "build:workers": "npm run build:whiteboard && vite build --config vite.workers.config.mts && vite build --config vite.browser.config.mts && next typegen"
   },
   "dependencies": {
     "lucide-react": "1.66.0",
-    "next": "16.4.3",
+    "next": "16.4.6",
     "pg": "8.23.1",
     "playwright": "1.64.1",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "undici": "7.30.2",
     "yaml": "2.9.1"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "1.69.1",
     "@playwright/test": "1.64.1",
     "@tailwindcss/turbopack": "4.3.3",
+    "@tailwindcss/vite": "4.3.3",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
     "@types/node": "24.19.2",
@@ -55,11 +58,12 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.2.1",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.6",
     "jsdom": "30.1.3",
     "prettier": "3.9.10",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
+    "vite": "8.3.8",
     "vitest": "5.0.5"
   }
 }

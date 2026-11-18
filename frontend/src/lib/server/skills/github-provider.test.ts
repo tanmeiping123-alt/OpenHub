@@ -78,7 +78,7 @@ it("pins once, fetches only canonical tree/blob API URLs and validates every res
     expect(url.startsWith(f.base)).toBe(true);
     expect(opts).toMatchObject({
       method: "GET",
-      redirect: "error",
+      redirect: "manual",
       credentials: "omit",
       cache: "no-store",
     });

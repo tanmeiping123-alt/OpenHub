@@ -12,6 +12,15 @@ function request(host: string, origin?: string) {
 }
 
 describe("local demo API boundary", () => {
+  it("accepts the canonical Workers origin while rejecting forged forwarding headers", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "true");
+    vi.stubEnv("PROMPTMASTER_DEPLOYMENT_MODE", "cloudflare-workers");
+    vi.stubEnv("OPENHUB_PUBLIC_ORIGIN", "https://openhub.example");
+    const headers = { host: "openhub.example", "x-forwarded-host": "openhub.example", "x-forwarded-proto": "https", origin: "https://openhub.example" };
+    expect(guardLocalDemoApi(new Request("https://openhub.example/api/test", { headers }), true)).toBeNull();
+    expect(guardLocalDemoApi(new Request("https://openhub.example/api/test", { headers: { ...headers, origin: "https://evil.example" } }), true)?.status).toBe(403);
+  });
   it("is disabled unless explicitly enabled outside production", () => {
     vi.stubEnv("PROMPTMASTER_DEMO_API_ENABLED", "false");
     vi.stubEnv("NODE_ENV", "development");

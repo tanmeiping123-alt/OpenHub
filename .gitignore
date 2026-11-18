@@ -68,6 +68,7 @@ playwright-report/
 *.log
 *.tsbuildinfo
 .wrangler/
+.vinext/
 .dev.vars*
 !**/.dev.vars.example
 /cloudflare/worker-configuration.d.ts

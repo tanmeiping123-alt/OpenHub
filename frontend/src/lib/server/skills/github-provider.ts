@@ -178,7 +178,7 @@ export function githubReader(
     try {
       const response = await fetcher(base + suffix, {
         method: "GET",
-        redirect: "error",
+        redirect: "manual",
         credentials: "omit",
         cache: "no-store",
         signal,

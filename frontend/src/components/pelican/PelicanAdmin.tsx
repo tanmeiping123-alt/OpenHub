@@ -958,6 +958,10 @@ function runBlockCopy(batch: PelicanAdminBatch, locale: Locale) {
   const number = (value?: number) => (value === undefined ? null : value.toLocaleString("en-US"));
   const usd = (value?: number) => (value === undefined ? null : `USD ${value.toFixed(4)}`);
   const title = text(locale, "This batch cannot start yet", "当前无法开始执行");
+  if (code === "PELICAN_UNAVAILABLE_ON_FREE_CLOUD") return {
+    title,
+    body: text(locale, "The free cloud deployment does not run browser rendering or background batches. Run these tasks locally.", "免费云端不运行浏览器渲染或后台批次，请在本地执行这些任务。"),
+  };
   if (code === "MODEL_QUOTA_EXCEEDED") {
     const required = [
       number(block?.requiredTokens) ? `${number(block?.requiredTokens)} tokens` : null,

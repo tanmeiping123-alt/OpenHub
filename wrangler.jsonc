@@ -2,15 +2,34 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "openhub",
   "account_id": "e4d8817046dbaec42b4684431eccef0c",
-  "main": "cloudflare/worker.ts",
-  "compatibility_date": "2026-11-16",
+  "main": "frontend/cloudflare/worker.ts",
+  "compatibility_date": "2026-11-17",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "workers_dev": true,
-  "containers": [{
-    "class_name": "OpenHubContainer",
-    "image": "./Dockerfile",
-    "instance_type": "standard-1",
-    "max_instances": 1
-  }],
-  "durable_objects": { "bindings": [{ "name": "OPENHUB_CONTAINER", "class_name": "OpenHubContainer" }] },
-  "exports": { "OpenHubContainer": { "type": "durable-object", "storage": "sqlite" } }
+  "preview_urls": false,
+  "assets": {
+    "directory": "frontend/dist/client",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "vars": {
+    "PROMPTMASTER_DEPLOYMENT_MODE": "cloudflare-workers",
+    "PROMPTMASTER_DEMO_API_ENABLED": "true",
+    "NEXT_PUBLIC_PROMPTMASTER_DEMO_API_ENABLED": "true",
+    "OPENHUB_PUBLIC_ORIGIN": "https://openhub.tanmeiping123.workers.dev",
+    "PROMPTMASTER_PAYMENT_ENABLED": "false",
+    "SUPABASE_URL": "https://dgbedszyavgwjznoievi.supabase.co"
+  },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "5c4cf1f75d484d00a0869e00f2d6c0e8"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
 }

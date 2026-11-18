@@ -354,6 +354,11 @@ async function quoteBatch(
           : "MODEL_CONFIGURATION_UNAVAILABLE";
     runBlock = runBlock ?? { code: blockedReason };
   }
+  if (process.env.PROMPTMASTER_DEPLOYMENT_MODE === "cloudflare-workers") {
+    canRun = false;
+    blockedReason = "PELICAN_UNAVAILABLE_ON_FREE_CLOUD";
+    runBlock = { code: blockedReason };
+  }
   if (!runBlock && blockedReason) runBlock = { code: blockedReason };
   return {
     ...batchDto(row, samples),

@@ -19,11 +19,14 @@
     "db:migrate": "npm --prefix frontend run db:migrate",
     "test:cloud": "node --test cloudflare/*.test.mjs",
     "typecheck:cloud": "node frontend/node_modules/typescript/bin/tsc --project cloudflare/tsconfig.json",
-    "cloud:build": "docker build -t openhub:local .",
-    "cloud:deploy": "wrangler deploy --keep-vars",
-    "cloud:verify": "npm run test:cloud && npm run typecheck:cloud && wrangler deploy --dry-run --containers-rollout none --outdir .wrangler/worker-check",
-    "db:bootstrap:cloud": "node --env-file-if-exists=.env.cloud.local frontend/scripts/initialize-accounts.mjs --cloud",
-    "cloud:login": "wrangler login"
+    "cloud:build": "npm --prefix frontend run build:workers",
+    "cloud:smoke": "node scripts/smoke-free.mjs",
+    "cloud:deploy": "node scripts/deploy-free.mjs",
+    "cloud:verify": "npm run test:cloud && npm run typecheck:cloud && wrangler deploy --config frontend/dist/ssr/wrangler.json --dry-run --outdir .wrangler/free-check",
+    "db:bootstrap:cloud": "node --env-file-if-exists=.env.cloud.local scripts/link-supabase-account.mjs",
+    "cloud:login": "wrangler login",
+    "db:migrate:cloud": "node --env-file-if-exists=.env.cloud.local scripts/migrate-cloud.mjs",
+    "cloud:secrets": "node --env-file-if-exists=.env.cloud.local scripts/cloud-secrets.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20261116.1",

@@ -24,6 +24,7 @@ import { pelicanHash, pelicanMessages, pelicanPayload } from "./policy";
 import { PELICAN_ADAPTER_VERSION, preparePelicanPreview } from "./renderer";
 import { forEachConcurrent, pelicanConcurrency } from "./concurrency";
 import { beginBackgroundWork } from "../runtime-activity";
+import { requirePelicanRuntime } from "../cloud-capabilities";
 
 function runtimeConfig(snapshot: Omit<LiveModelConfig, "apiKey">, modelKey: string) {
   const current = readPelicanModelConfig(process.env, {
@@ -45,6 +46,7 @@ async function completeSettledBatch(batchId: string) {
 }
 
 export async function preparePelicanSample(sampleId: string) {
+  requirePelicanRuntime();
   const actor = await requireActivePelicanAdmin();
   const sample = (
     await getPool().query(
@@ -475,10 +477,12 @@ function createPelicanRunner(batchId: string, epoch: string): LocalRunner {
   return runner;
 }
 export async function runPelicanBatch(batchId: string, fingerprint: string) {
+  requirePelicanRuntime();
   const reserved = await reservePelicanBatch(batchId, fingerprint);
   return executePelicanBatch(batchId, reserved);
 }
 export async function startPelicanBatch(batchId: string, fingerprint: string) {
+  requirePelicanRuntime();
   const reserved = await reservePelicanBatch(batchId, fingerprint);
   const accepted = await getPelicanAdminBatch(batchId);
   // A detached continuation inherits the authenticated AsyncLocalStorage actor.

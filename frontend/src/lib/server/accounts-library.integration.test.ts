@@ -31,6 +31,7 @@ import { ensureDatabaseReady, getPool } from "./db";
 import { hashPassword, verifyPassword } from "./password";
 import {
   authenticate,
+  authenticateExternalIdentity,
   createAccountInTransaction,
   createSession,
   sessionActor,
@@ -130,6 +131,23 @@ describe.skipIf(process.env.PROMPTMASTER_ACCOUNT_DB_TEST !== "true")(
       await getPool().end();
     });
     const token = async (actor: Actor) => createSession(actor);
+    it("provisions and reuses a cloud USER identity with an unusable local password", async () => {
+      const identity = { subject: randomUUID(), email: `oauth-${randomUUID()}@example.test` };
+      const actor = await authenticateExternalIdentity(identity);
+      expect(actor.role).toBe("USER");
+      expect(await authenticateExternalIdentity(identity)).toEqual(actor);
+      const stored = (await c.query("SELECT password_hash FROM regular_users WHERE user_id=$1", [actor.id])).rows[0];
+      expect(await verifyPassword(password, stored.password_hash)).toBe(false);
+      expect((await c.query("SELECT subject FROM account_external_identities WHERE user_id=$1", [actor.id])).rows).toEqual([{ subject: identity.subject }]);
+      await c.query("UPDATE regular_users SET disabled=true WHERE user_id=$1", [actor.id]);
+      await expect(authenticateExternalIdentity(identity)).rejects.toMatchObject({ code: "INVALID_CREDENTIALS" });
+    });
+    it("requires explicit association before an external identity may use an existing admin account", async () => {
+      const identity = { subject: randomUUID(), email: admin.email };
+      await expect(authenticateExternalIdentity(identity)).rejects.toMatchObject({ code: "ACCOUNT_LINK_REQUIRED" });
+      await c.query("INSERT INTO account_external_identities(provider,subject,user_id) VALUES('supabase',$1,$2)", [identity.subject, admin.id]);
+      expect(await authenticateExternalIdentity(identity)).toEqual(admin);
+    });
     it("keeps uncategorized descriptor metadata out of the body and avoids unchanged optimization versions", async () => {
       await accountContext.run(user, async () => {
         const descriptor = { purposes: ["analyze", "create"] as const, tags: ["汇报"] };

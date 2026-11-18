@@ -6,7 +6,7 @@ const loopbackHosts = new Set(["localhost", "127.0.0.1", "[::1]"]);
 export function guardLocalDemoApi(request: Request, requireSameOrigin = false) {
   const host = request.headers.get("host")?.toLowerCase() ?? "";
   const hostname = host.replace(/:\d+$/, "");
-  const cloud = process.env.PROMPTMASTER_DEPLOYMENT_MODE === "cloudflare-container";
+  const cloud = ["cloudflare-container", "cloudflare-workers"].includes(process.env.PROMPTMASTER_DEPLOYMENT_MODE ?? "");
   let cloudOrigin = "";
   if (cloud) {
     try {

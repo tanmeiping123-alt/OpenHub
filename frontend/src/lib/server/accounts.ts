@@ -5,6 +5,7 @@ import { withTransaction } from "./db";
 import { hashPassword, verifyPassword } from "./password";
 import { type Actor } from "./identity-context";
 import { AccountError } from "./account-errors";
+import { type ExternalIdentity, authenticateWithSupabase } from "./supabase-auth";
 export { AccountError } from "./account-errors";
 export const SESSION_COOKIE = "pm_session";
 const digest = (v: string) => createHash("sha256").update(v).digest("hex");
@@ -87,9 +88,36 @@ async function reserveLoginAttempt(email: string) {
   });
   if (!allowed) throw new AccountError("TOO_MANY_ATTEMPTS", 429);
 }
+export async function authenticateExternalIdentity(identity: ExternalIdentity, reserve = true) {
+  const email = identity.email;
+  if (reserve) await reserveLoginAttempt(email);
+    return withTransaction(async (c) => {
+      await c.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`external-account:${email}`]);
+      const linked = (await c.query(
+        `SELECT a.user_id AS id,a.email,a.role,a.disabled FROM account_external_identities e JOIN (${accountsSql}) a ON a.user_id=e.user_id WHERE e.provider='supabase' AND e.subject=$1`,
+        [identity.subject],
+      )).rows[0];
+      if (linked?.disabled) throw new AccountError("INVALID_CREDENTIALS", 401);
+      let actor: Actor;
+      if (linked) actor = { id: linked.id, email: linked.email, role: linked.role };
+      else {
+        const existing = await c.query("SELECT id FROM app_users WHERE identity_key=$1", [`email:${email}`]);
+        if (existing.rowCount) throw new AccountError("ACCOUNT_LINK_REQUIRED", 403);
+        // Deliberately not a usable local password hash. Local scrypt verification rejects it.
+        actor = await createAccountInTransaction(c, email, "scrypt$external-auth-only", "USER");
+        await c.query("INSERT INTO account_external_identities(provider,subject,user_id) VALUES('supabase',$1,$2)", [identity.subject, actor.id]);
+      }
+      await c.query("DELETE FROM account_login_limits WHERE bucket=$1", [digest(email)]);
+      return actor;
+    });
+}
 export async function authenticate(value: unknown, register = false) {
   const { email, password } = credentials(value);
   await reserveLoginAttempt(email);
+  if (process.env.PROMPTMASTER_DEPLOYMENT_MODE === "cloudflare-workers") {
+    const identity = await authenticateWithSupabase(email, password, register);
+    return authenticateExternalIdentity(identity, false);
+  }
   if (register) {
     const encoded = await hashPassword(password);
     try {
